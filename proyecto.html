@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Diccionario de Informática</title>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', sans-serif;
+            background: linear-gradient(to right, #e0f7fa, #e1bee7);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 2rem;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            color: #4a148c;
+        }
+
+        .search-container {
+            background: white;
+            padding: 1.5rem 2rem;
+            border-radius: 20px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 700px;
+            margin-bottom: 2rem;
+        }
+
+        .search-container input {
+            width: 70%;
+            padding: 0.8rem;
+            border: 1px solid #ccc;
+            border-radius: 10px;
+            font-size: 1rem;
+        }
+
+        .search-container button {
+            padding: 0.8rem 1.2rem;
+            margin-left: 0.5rem;
+            background-color: #6a1b9a;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+
+        .search-container button:hover {
+            background-color: #4a148c;
+        }
+
+        #result {
+            margin-top: 1.5rem;
+            font-size: 1.2rem;
+            color: #333;
+            min-height: 40px;
+        }
+
+        .topics {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            justify-content: center;
+            max-width: 800px;
+        }
+
+        .topic {
+            background: white;
+            padding: 1rem;
+            border-radius: 15px;
+            width: 250px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .topic h3 {
+            margin-top: 0;
+            color: #6a1b9a;
+        }
+
+        .topic ul {
+            padding-left: 1.2rem;
+            list-style: square;
+            color: #444;
+        }
+
+        .topic li {
+            margin-bottom: 0.4rem;
+        }
+
+        .info-section {
+            margin-top: 3rem;
+            background: #f3e5f5;
+            padding: 2rem;
+            border-radius: 15px;
+            max-width: 800px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+
+        .info-section h2 {
+            color: #6a1b9a;
+        }
+
+        .word-list {
+            margin-top: 1rem;
+            background: #fff;
+            padding: 1rem;
+            border-radius: 10px;
+            font-size: 1rem;
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <h1>Diccionario de Informática</h1>
+        <p>Busca términos técnicos y consulta su definición fácilmente.</p>
+    </div>
+
+    <div class="search-container">
+        <input type="text" id="searchInput" placeholder="Escribe una palabra clave (ej. algoritmo)" />
+        <button id="searchButton">Buscar</button>
+        <div id="result"></div>
+    </div>
+
+    <div class="topics">
+        <div class="topic">
+            <h3>Programación</h3>
+            <ul>
+                <li>algoritmo</li>
+                <li>compilador</li>
+                <li>programación</li>
+                <li>javascript</li>
+            </ul>
+        </div>
+        <div class="topic">
+            <h3>Bases de Datos</h3>
+            <ul>
+                <li>base de datos</li>
+            </ul>
+        </div>
+        <div class="topic">
+            <h3>Hardware / Sistemas</h3>
+            <ul>
+                <li>computadora</li>
+                <li>sistema operativo</li>
+            </ul>
+        </div>
+        <div class="topic">
+            <h3>Redes</h3>
+            <ul>
+                <li>red</li>
+            </ul>
+        </div>
+        <div class="topic">
+            <h3>Otros</h3>
+            <ul>
+                <li>árbol</li>
+                <li>binario</li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="info-section">
+        <h2>¿Cómo funciona este diccionario?</h2>
+        <p>
+            Este diccionario utiliza una estructura de <strong>árbol binario de búsqueda</strong> (BST) para almacenar y recuperar definiciones de manera eficiente.
+            Gracias a esta estructura, las palabras se organizan de forma jerárquica y alfabética, lo que permite realizar búsquedas rápidas, generalmente en tiempo logarítmico.
+            Ideal para manejar datos ordenados sin necesidad de recorrer todo el conjunto.
+        </p>
+        <div class="word-list">
+            <strong>Palabras disponibles:</strong> árbol, binario, javascript, algoritmo, computadora, programación, compilador, base de datos, sistema operativo, red
+        </div>
+    </div>
+
+    <script>
+        class TreeNode {
+            constructor(word, definition) {
+                this.word = word;
+                this.definition = definition;
+                this.left = null;
+                this.right = null;
+            }
+        }
+
+        class DictionaryBST {
+            constructor() {
+                this.root = null;
+            }
+
+            insert(word, definition) {
+                const newNode = new TreeNode(word, definition);
+                if (!this.root) {
+                    this.root = newNode;
+                    return;
+                }
+                this.#insertNode(this.root, newNode);
+            }
+
+            #insertNode(node, newNode) {
+                if (newNode.word < node.word) {
+                    if (!node.left) {
+                        node.left = newNode;
+                    } else {
+                        this.#insertNode(node.left, newNode);
+                    }
+                } else {
+                    if (!node.right) {
+                        node.right = newNode;
+                    } else {
+                        this.#insertNode(node.right, newNode);
+                    }
+                }
+            }
+
+            depthFirstSearch(word) {
+                return this.#dfs(this.root, word);
+            }
+
+            #dfs(node, word) {
+                if (!node) return "Palabra no encontrada en el diccionario.";
+                if (node.word === word) return node.definition;
+                if (word < node.word) {
+                    return this.#dfs(node.left, word);
+                } else {
+                    return this.#dfs(node.right, word);
+                }
+            }
+        }
+
+        const dictionary = new DictionaryBST();
+        dictionary.insert("árbol", "Planta perenne de tallo leñoso y elevado que se ramifica a cierta altura del suelo.");
+        dictionary.insert("binario", "Que consta de dos elementos o unidades.");
+        dictionary.insert("javascript", "Lenguaje de programación interpretado, dialecto del estándar ECMAScript.");
+        dictionary.insert("algoritmo", "Conjunto ordenado y finito de operaciones que permite hallar la solución de un problema.");
+        dictionary.insert("computadora", "Máquina electrónica que recibe, procesa y almacena información automáticamente.");
+        dictionary.insert("programación", "Proceso de diseñar, escribir y mantener el código fuente de programas informáticos.");
+        dictionary.insert("compilador", "Programa que traduce el código fuente escrito en un lenguaje de programación a un lenguaje máquina ejecutable.");
+        dictionary.insert("base de datos", "Conjunto organizado de información o datos estructurados, almacenados electrónicamente en un sistema informático.");
+        dictionary.insert("sistema operativo", "Software que administra los recursos del hardware y proporciona servicios a los programas de aplicación.");
+        dictionary.insert("red", "Conjunto de computadoras y dispositivos conectados entre sí para compartir recursos e intercambiar información.");
+
+        document.getElementById("searchButton").addEventListener("click", () => {
+            const word = document.getElementById("searchInput").value.toLowerCase();
+            const result = dictionary.depthFirstSearch(word);
+            document.getElementById("result").innerText = result;
+        });
+    </script>
+
+</body>
+</html>
